@@ -1,29 +1,53 @@
 <script src="https://unpkg.com/vue@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.1/dist/full.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<html data-theme="emerald">
 
-<div id="app">
-    <div>
-        <h2>투표 생성</h2>
-        <label for="subject">투표 주제</label>
-        <input type="text" id="subject" v-model="subject">
-        <label for="password">비밀번호(6자리 숫자)</label>
-        <input type="text" id="psssword" v-model="password" @keypress.enter="createVote" minlength="6" maxlength="6">
-        <button @click="createVote">투표 등록</button>
-    </div>
-    <div v-for="vote in votes" :key="vote.id">
-        <h1>[{{ vote.id }}] {{ vote.subject }}</h1>
-        <p>투표 등록일: {{ vote.created }}</p>
-        <p>찬성: {{ vote.yes }}</p>
-        <p>반대: {{ vote.no }}</p>
-        <div v-if="vote.is_active">
-            <button @click="submitYesVote(vote.id)">YES</button>
-            <button @click="submitNoVote(vote.id)">NO</button>
-            <button @click="checkFinishiVote(vote.id, vote.password)">투표 종료</button>
+<div id="app" class="container-fluid mx-auto bg-base-200">
+    <div class="h-10"></div>
+    <div class="text-center">
+        <h2 class="text-center text-6xl mb-10">YES or NO</h2>
+        <div class="mb-2">
+            <label for="subject" class="mr-10">투표주제</label>
+            <input type="text" id="subject" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
         </div>
-        <div v-else>
-            <p>종료된 투표입니다.</p>
+        <div class="mb-5">
+            <label for="password" class="mr-10">비밀번호</label>
+            <input type="password" id="psssword" class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
+        </div>
+        <button class="btn btn-primary" @click="createVote">투표 등록</button>
+    </div>
+    <div class="divider my-8">Vote Now!</div>
+    <div class="flex flex-wrap justify-center">
+        <div v-for="vote in votes" :key="vote.id" class="card w-96 bg-base-100 shadow-xl m-5  hover:shadow-2xl">
+            <div class="card-body break-all">
+                <h2 class="card-title h-20">[{{ vote.id }}] {{ vote.subject }}</h2>
+                <div class="flex text-center">
+                    <div class="stat">
+                        <div class="stat-title">YES</div>
+                        <div class="stat-value my-5">{{ vote.yes }}</div>
+                        <button v-if="vote.is_active" @click="submitYesVote(vote.id)" class="btn">YES</button><br>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">NO</div>
+                        <div class="stat-value my-5">{{ vote.no }}</div>
+                        <button v-if="vote.is_active" @click="submitNoVote(vote.id)" class="btn">NO</button><br>
+                    </div>
+                </div>
+                <div class="card-actions justify-center">
+                    <div v-if="vote.is_active">
+                        <button @click="checkFinishiVote(vote.id, vote.password)" class="btn btn-xs btn-accent">투표 종료</button>
+                    </div>
+                    <div v-else>
+                        <p class="my-5 text-accent">종료된 투표입니다.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-right mr-5 mb-5">Created At {{ vote.created }}</p>
         </div>
     </div>
+    <div class="h-20"></div>
 </div>
 
 <script>
@@ -96,7 +120,7 @@
             }
         },
         checkFinishiVote(id, password) {
-            const input = prompt('비밀번호(6자리)를 입력해주세요.')
+            const input = prompt('비밀번호를 입력해주세요.')
             if (input === password) {
                 this.finishVote(id)
             } else {
@@ -119,3 +143,5 @@
     }
   }).mount('#app')
 </script>
+
+</html>
