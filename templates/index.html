@@ -8,14 +8,15 @@
 <div id="app" class="container-fluid mx-auto bg-base-200">
     <div class="h-10"></div>
     <div class="text-center">
-        <h2 class="text-center text-6xl mb-10">YES or NO</h2>
+        <h2 class="text-center text-6xl mb-5">YES or NO</h2>
+        <h6 class="text-center text-md mb-10">누구나 투표를 생성할 수 있습니다<h6>
         <div class="mb-2">
             <label for="subject" class="mr-10">투표주제</label>
             <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
         </div>
         <div class="mb-5">
             <label for="password" class="mr-10">비밀번호</label>
-            <input type="password" id="psssword" class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
+            <input type="password" id="psssword" placeholder="투표 종료 및 삭제 시 비밀번호가 필요합니다." class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
         </div>
         <button class="btn btn-primary" @click="createVote">투표 등록</button>
     </div>
@@ -65,7 +66,8 @@
         votes: [],
         subject: '',
         password: '',
-        api: 'https://youcanvote.herokuapp.com/api/vote/'
+        state: true,
+        api: 'https://youcanvote.herokuapp.com/api/vote/',
       }
     },
     mounted() {
@@ -83,18 +85,24 @@
         },
         async createVote() {
             try {
-                let body = {
-                    "subject": this.subject,
-                    "password": this.password
+                if (this.state) {
+                    this.state = false
+                    let body = {
+                        "subject": this.subject,
+                        "password": this.password
+                    }
+                    option = {
+                        headers: {'X-CSRFToken': csrftoken},
+                    }
+                    const response = await axios.post(this.api, body, option)
+                    this.getActiveVoteList()
+                    this.subject = null
+                    this.password = null
+                    this.state = true
+                    alert('투표가 등록되었습니다.')
+                } else {
+                    alert('투표가 등록중입니다.')
                 }
-                option = {
-                    headers: {'X-CSRFToken': csrftoken},
-                }
-                const response = await axios.post(this.api, body, option)
-                this.getActiveVoteList()
-                this.subject = ''
-                this.password = ''
-                alert('투표가 등록되었습니다.')
             } catch(error) {
                 console.log(error)
                 alert('투표 등록에 실패하였습니다.')
@@ -102,17 +110,23 @@
         },
         async submitYesVote(id) {
             try {
-                let body = {};
-                const nowVote = await axios.get(`${this.api}${id}/`)
-                body = {
-                    "yes": nowVote.data.yes + 1
+                if (this.state) {
+                    this.state = false
+                    let body = {};
+                    const nowVote = await axios.get(`${this.api}${id}/`)
+                    body = {
+                        "yes": nowVote.data.yes + 1
+                    }
+                    option = {
+                        headers: {'X-CSRFToken': csrftoken},
+                    }
+                    const respose = await axios.patch(`${this.api}${id}/`, body, option)
+                    this.getActiveVoteList()
+                    this.state = true
+                    alert('투표가 완료되었습니다.')
+                } else {
+                    alert('투표가 진행중입니다.')
                 }
-                option = {
-                    headers: {'X-CSRFToken': csrftoken},
-                }
-                const respose = await axios.patch(`${this.api}${id}/`, body, option)
-                this.getActiveVoteList()
-                alert('투표가 완료되었습니다.')
             } catch(error) {
                 console.log(error);
                 alert('투표에 실패하였습니다.')
@@ -120,17 +134,23 @@
         },
         async submitNoVote(id) {
             try {
-                let body = {}
-                const nowVote = await axios.get(`${this.api}${id}/`)
-                body = {
-                    "no": nowVote.data.no + 1
+                if (this.state) {
+                    this.state = false
+                    let body = {}
+                    const nowVote = await axios.get(`${this.api}${id}/`)
+                    body = {
+                        "no": nowVote.data.no + 1
+                    }
+                    option = {
+                        headers: {'X-CSRFToken': csrftoken},
+                    }
+                    const respose = await axios.patch(`${this.api}${id}/`, body, option)
+                    this.getActiveVoteList()
+                    this.state = true
+                    alert('투표가 완료되었습니다.')
+                } else {
+                    alert('투표가 진행중입니다.')
                 }
-                option = {
-                    headers: {'X-CSRFToken': csrftoken},
-                }
-                const respose = await axios.patch(`${this.api}${id}/`, body, option)
-                this.getActiveVoteList()
-                alert('투표가 완료되었습니다.')
             } catch(error) {
                 console.log(error)
                 alert('투표에 실패하였습니다.')
