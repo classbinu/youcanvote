@@ -23,7 +23,7 @@
                         <label for="subject" class="label">
                             <span class="label-text">투표 주제</span>
                         </label>
-                        <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
+                        <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" autocomplete="off" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
                     </div>
                 </div>
                 <div class="flex justify-center">
@@ -31,7 +31,7 @@
                         <label for="password" class="label">
                             <span class="label-text">비밀번호</span>
                         </label>
-                        <input type="password" id="password" placeholder="투표 종료 및 삭제 시 비밀번호가 필요합니다." class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
+                        <input type="password" id="password" placeholder="투표 종료 및 삭제 시 비밀번호가 필요합니다." autocomplete="off" class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
                     </div>
                 </div>
                 <button class="btn btn-primary my-5" @click="createVote">투표 등록</button>
