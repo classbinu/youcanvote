@@ -22,16 +22,17 @@
     <div class="flex flex-wrap justify-center">
         <div v-for="vote in votes" :key="vote.id" class="card w-96 bg-base-100 shadow-xl m-5  hover:shadow-2xl">
             <div class="card-body break-all">
-                <h2 class="card-title h-20">[{{ vote.id }}] {{ vote.subject }}</h2>
+                <h2 class="card-title text-center" v-text="vote.id"></h2>
+                <h2 class="card-title" v-text="vote.subject"></h2>
                 <div class="flex text-center">
                     <div class="stat">
                         <div class="stat-title">YES</div>
-                        <div class="stat-value my-5">{{ vote.yes }}</div>
+                        <div class="stat-value my-5" v-text="vote.yes"></div>
                         <button v-if="vote.is_active" @click="submitYesVote(vote.id)" class="btn">YES</button><br>
                     </div>
                     <div class="stat">
                         <div class="stat-title">NO</div>
-                        <div class="stat-value my-5">{{ vote.no }}</div>
+                        <div class="stat-value my-5" v-text="vote.no"></div>
                         <button v-if="vote.is_active" @click="submitNoVote(vote.id)" class="btn">NO</button><br>
                     </div>
                 </div>
@@ -44,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <p class="text-xs text-right mr-5 mb-5">Created At {{ vote.created }}</p>
+            <p class="text-xs mr-5 mb-5 text-right" v-text="vote.created"></p>
         </div>
     </div>
     <div class="h-20"></div>
