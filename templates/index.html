@@ -59,6 +59,7 @@
         votes: [],
         subject: '',
         password: '',
+        api: 'https://youcanvote.herokuapp.com/api/vote/'
       }
     },
     mounted() {
@@ -71,7 +72,7 @@
                     "subject": this.subject,
                     "password": this.password
                 }
-                const response = await axios.post('http://127.0.0.1:8000/api/vote/', body)
+                const response = await axios.post(this.api, body)
                 this.getActiveVoteList()
                 this.subject = ''
                 this.password = ''
@@ -83,7 +84,7 @@
         },
         async getActiveVoteList() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/vote/')
+                const response = await axios.get(this.api,)
                 this.votes = response.data;
             } catch(error) {
                 console.log(error);
@@ -92,11 +93,11 @@
         async submitYesVote(id) {
             try {
                 let body = {};
-                const nowVote = await axios.get(`http://127.0.0.1:8000/api/vote/${id}/`)
+                const nowVote = await axios.get(`${this.api}${id}/`)
                 body = {
                     "yes": nowVote.data.yes + 1
                 }
-                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                const respose = await axios.patch(`${this.api}${id}/`, body)
                 this.getActiveVoteList()
                 alert('투표가 완료되었습니다.')
             } catch(error) {
@@ -107,11 +108,11 @@
         async submitNoVote(id) {
             try {
                 let body = {}
-                const nowVote = await axios.get(`http://127.0.0.1:8000/api/vote/${id}/`)
+                const nowVote = await axios.get(`${this.api}${id}/`)
                 body = {
                     "no": nowVote.data.no + 1
                 }
-                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                const respose = await axios.patch(`${this.api}${id}/`, body)
                 this.getActiveVoteList()
                 alert('투표가 완료되었습니다.')
             } catch(error) {
@@ -132,7 +133,7 @@
                 const body = {
                     "is_active": false
                 }
-                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                const respose = await axios.patch(`${this.api}${id}/`, body)
                 this.getActiveVoteList()
                 alert('투표가 종료되었습니다.')
             } catch(error) {
