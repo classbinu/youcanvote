@@ -1,209 +1,218 @@
-<script src="https://unpkg.com/vue@3"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.1/dist/full.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-<html data-theme="emerald">
-
-<div id="app" class="container-fluid mx-auto bg-base-200">
-    <div class="h-10"></div>
-    <div class="text-center">
-        <h2 class="text-center text-6xl mb-5">YES or NO</h2>
-        <h6 class="text-center text-md mb-10">누구나 투표를 생성할 수 있습니다<h6>
-        <div class="mb-2">
-            <label for="subject" class="mr-10">투표주제</label>
-            <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
-        </div>
-        <div class="mb-5">
-            <label for="password" class="mr-10">비밀번호</label>
-            <input type="password" id="psssword" placeholder="투표 종료 및 삭제 시 비밀번호가 필요합니다." class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
-        </div>
-        <button class="btn btn-primary" @click="createVote">투표 등록</button>
-    </div>
-    <div class="divider my-8">You can vote!</div>
-    <div class="flex flex-wrap justify-center">
-        <div v-for="vote in votes" :key="vote.id" class="card w-96 bg-base-100 shadow-xl m-5  hover:shadow-2xl">
-            <div class="card-body break-all">
-                <h2 class="card-title text-center" v-text="vote.id"></h2>
-                <h2 class="card-title" v-text="vote.subject"></h2>
-                <div class="flex text-center">
-                    <div class="stat">
-                        <div class="stat-title">YES</div>
-                        <div class="stat-value my-5" v-text="vote.yes"></div>
-                        <button v-if="vote.is_active" @click="submitYesVote(vote.id)" class="btn">YES</button><br>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-title">NO</div>
-                        <div class="stat-value my-5" v-text="vote.no"></div>
-                        <button v-if="vote.is_active" @click="submitNoVote(vote.id)" class="btn">NO</button><br>
-                    </div>
+<!DOCTYPE html>
+<html lang="ko" data-theme="emerald">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>YES or No</title>
+        <script src="https://unpkg.com/vue@3"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.1/dist/full.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+        <html >
+    </head>
+    <body>
+            
+        <div id="app" class="container-fluid mx-auto bg-base-200">
+            <div class="h-10"></div>
+            <div class="text-center">
+                <h2 class="text-center text-6xl mb-5">YES or NO</h2>
+                <h6 class="text-center text-md mb-10">누구나 투표를 생성할 수 있습니다<h6>
+                <div class="mb-2">
+                    <label for="subject" class="mr-10">투표주제</label>
+                    <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
                 </div>
-                <div class="card-actions justify-center">
-                    <div v-if="vote.is_active">
-                        <button @click="confirmFinishiVote(vote.id, vote.password)" class="btn btn-xs btn-warning">투표 종료</button>
-                    </div>
-                    <div v-else>
-                        <span class="text-error">종료된 투표입니다.</span>
-                        <div class="flex justify-center mt-5">
-                            <button @click="confirmDeleteVote(vote.id, vote.password)" class="btn btn-xs btn-error">투표 삭제</button>
+                <div class="mb-5">
+                    <label for="password" class="mr-10">비밀번호</label>
+                    <input type="password" id="psssword" placeholder="투표 종료 및 삭제 시 비밀번호가 필요합니다." class="input input-bordered input-primary w-full max-w-xs" v-model="password" @keypress.enter="createVote">
+                </div>
+                <button class="btn btn-primary" @click="createVote">투표 등록</button>
+            </div>
+            <div class="divider my-8">You can vote!</div>
+            <div class="flex flex-wrap justify-center">
+                <div v-for="vote in votes" :key="vote.id" class="card w-96 bg-base-100 shadow-xl m-5  hover:shadow-2xl">
+                    <div class="card-body break-all">
+                        <h2 class="card-title text-center" v-text="vote.id"></h2>
+                        <h2 class="card-title" v-text="vote.subject"></h2>
+                        <div class="flex text-center">
+                            <div class="stat">
+                                <div class="stat-title">YES</div>
+                                <div class="stat-value my-5" v-text="vote.yes"></div>
+                                <button v-if="vote.is_active" @click="submitYesVote(vote.id)" class="btn">YES</button><br>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-title">NO</div>
+                                <div class="stat-value my-5" v-text="vote.no"></div>
+                                <button v-if="vote.is_active" @click="submitNoVote(vote.id)" class="btn">NO</button><br>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-center">
+                            <div v-if="vote.is_active">
+                                <button @click="confirmFinishiVote(vote.id, vote.password)" class="btn btn-xs btn-warning">투표 종료</button>
+                            </div>
+                            <div v-else>
+                                <span class="text-error">종료된 투표입니다.</span>
+                                <div class="flex justify-center mt-5">
+                                    <button @click="confirmDeleteVote(vote.id, vote.password)" class="btn btn-xs btn-error">투표 삭제</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <p class="text-xs mr-5 mb-5 text-right" v-text="vote.created"></p>
                 </div>
             </div>
-            <p class="text-xs mr-5 mb-5 text-right" v-text="vote.created"></p>
+            <p class="py-20 text-center">classbinu@gmail.com</p>
         </div>
-    </div>
-    <p class="py-20 text-center">classbinu@gmail.com</p>
-</div>
 
-<script>
-  const csrftoken = Cookies.get('csrftoken');
-  const { createApp } = Vue
+        <script>
+        const csrftoken = Cookies.get('csrftoken');
+        const { createApp } = Vue
 
-  createApp({
-    data() {
-      return {
-        votes: [],
-        subject: '',
-        password: '',
-        state: true,
-        api: 'https://youcanvote.herokuapp.com/api/vote/',
-      }
-    },
-    mounted() {
-        this.getActiveVoteList()
-    },
-    methods: {
-        async getActiveVoteList() {
-            try {
-                const response = await axios.get(this.api,)
-                this.votes = response.data;
-                console.log(response)
-            } catch(error) {
-                console.log(error);
+        createApp({
+            data() {
+            return {
+                votes: [],
+                subject: '',
+                password: '',
+                state: true,
+                api: 'https://youcanvote.herokuapp.com/api/vote/',
             }
-        },
-        async createVote() {
-            try {
-                if (this.state) {
-                    this.state = false
-                    let body = {
-                        "subject": this.subject,
-                        "password": this.password
-                    }
-                    option = {
-                        headers: {'X-CSRFToken': csrftoken},
-                    }
-                    const response = await axios.post(this.api, body, option)
-                    this.getActiveVoteList()
-                    this.subject = null
-                    this.password = null
-                    this.state = true
-                    alert('투표가 등록되었습니다.')
-                } else {
-                    alert('투표가 등록중입니다.')
-                }
-            } catch(error) {
-                console.log(error)
-                alert('투표 등록에 실패하였습니다.')
-            }
-        },
-        async submitYesVote(id) {
-            try {
-                if (this.state) {
-                    this.state = false
-                    let body = {};
-                    const nowVote = await axios.get(`${this.api}${id}/`)
-                    body = {
-                        "yes": nowVote.data.yes + 1
-                    }
-                    option = {
-                        headers: {'X-CSRFToken': csrftoken},
-                    }
-                    const respose = await axios.patch(`${this.api}${id}/`, body, option)
-                    this.getActiveVoteList()
-                    this.state = true
-                    alert('투표가 완료되었습니다.')
-                } else {
-                    alert('투표가 진행중입니다.')
-                }
-            } catch(error) {
-                console.log(error);
-                alert('투표에 실패하였습니다.')
-            }
-        },
-        async submitNoVote(id) {
-            try {
-                if (this.state) {
-                    this.state = false
-                    let body = {}
-                    const nowVote = await axios.get(`${this.api}${id}/`)
-                    body = {
-                        "no": nowVote.data.no + 1
-                    }
-                    option = {
-                        headers: {'X-CSRFToken': csrftoken},
-                    }
-                    const respose = await axios.patch(`${this.api}${id}/`, body, option)
-                    this.getActiveVoteList()
-                    this.state = true
-                    alert('투표가 완료되었습니다.')
-                } else {
-                    alert('투표가 진행중입니다.')
-                }
-            } catch(error) {
-                console.log(error)
-                alert('투표에 실패하였습니다.')
-            }
-        },
-        confirmFinishiVote(id, password) {
-            const input = prompt('투표를 종료합니다. 비밀번호를 입력해주세요.')
-            if (input === password) {
-                this.finishVote(id)
-            } else {
-                alert('비밀번호가 일치하지 않습니다.')
-            }
-        },
-        confirmDeleteVote(id, password) {
-            const input = prompt('투표를 삭제합니다. 비밀번호를 입력해주세요.')
-            if (input === password) {
-                this.deleteVote(id)
-            } else {
-                alert('비밀번호가 일치하지 않습니다.')
-            }
-        },
-        async finishVote(id) {
-            try {
-                const body = {
-                    "is_active": false
-                }
-                option = {
-                    headers: {'X-CSRFToken': csrftoken},
-                }
-                const respose = await axios.patch(`${this.api}${id}/`, body, option)
+            },
+            mounted() {
                 this.getActiveVoteList()
-                alert('투표가 종료되었습니다.')
-            } catch(error) {
-                console.log(error)
-                alert('투표 종료에 실패하였습니다.')
-            }
-        },
-        async deleteVote(id) {
-            try {
-                const body = {}
-                option = {
-                    headers: {'X-CSRFToken': csrftoken},
+            },
+            methods: {
+                async getActiveVoteList() {
+                    try {
+                        const response = await axios.get(this.api,)
+                        this.votes = response.data;
+                        console.log(response)
+                    } catch(error) {
+                        console.log(error);
+                    }
+                },
+                async createVote() {
+                    try {
+                        if (this.state) {
+                            this.state = false
+                            let body = {
+                                "subject": this.subject,
+                                "password": this.password
+                            }
+                            option = {
+                                headers: {'X-CSRFToken': csrftoken},
+                            }
+                            const response = await axios.post(this.api, body, option)
+                            this.getActiveVoteList()
+                            this.subject = null
+                            this.password = null
+                            this.state = true
+                            alert('투표가 등록되었습니다.')
+                        } else {
+                            alert('투표가 등록중입니다.')
+                        }
+                    } catch(error) {
+                        console.log(error)
+                        alert('투표 등록에 실패하였습니다.')
+                    }
+                },
+                async submitYesVote(id) {
+                    try {
+                        if (this.state) {
+                            this.state = false
+                            let body = {};
+                            const nowVote = await axios.get(`${this.api}${id}/`)
+                            body = {
+                                "yes": nowVote.data.yes + 1
+                            }
+                            option = {
+                                headers: {'X-CSRFToken': csrftoken},
+                            }
+                            const respose = await axios.patch(`${this.api}${id}/`, body, option)
+                            this.getActiveVoteList()
+                            this.state = true
+                            alert('투표가 완료되었습니다.')
+                        } else {
+                            alert('투표가 진행중입니다.')
+                        }
+                    } catch(error) {
+                        console.log(error);
+                        alert('투표에 실패하였습니다.')
+                    }
+                },
+                async submitNoVote(id) {
+                    try {
+                        if (this.state) {
+                            this.state = false
+                            let body = {}
+                            const nowVote = await axios.get(`${this.api}${id}/`)
+                            body = {
+                                "no": nowVote.data.no + 1
+                            }
+                            option = {
+                                headers: {'X-CSRFToken': csrftoken},
+                            }
+                            const respose = await axios.patch(`${this.api}${id}/`, body, option)
+                            this.getActiveVoteList()
+                            this.state = true
+                            alert('투표가 완료되었습니다.')
+                        } else {
+                            alert('투표가 진행중입니다.')
+                        }
+                    } catch(error) {
+                        console.log(error)
+                        alert('투표에 실패하였습니다.')
+                    }
+                },
+                confirmFinishiVote(id, password) {
+                    const input = prompt('투표를 종료합니다. 비밀번호를 입력해주세요.')
+                    if (input === password) {
+                        this.finishVote(id)
+                    } else {
+                        alert('비밀번호가 일치하지 않습니다.')
+                    }
+                },
+                confirmDeleteVote(id, password) {
+                    const input = prompt('투표를 삭제합니다. 비밀번호를 입력해주세요.')
+                    if (input === password) {
+                        this.deleteVote(id)
+                    } else {
+                        alert('비밀번호가 일치하지 않습니다.')
+                    }
+                },
+                async finishVote(id) {
+                    try {
+                        const body = {
+                            "is_active": false
+                        }
+                        option = {
+                            headers: {'X-CSRFToken': csrftoken},
+                        }
+                        const respose = await axios.patch(`${this.api}${id}/`, body, option)
+                        this.getActiveVoteList()
+                        alert('투표가 종료되었습니다.')
+                    } catch(error) {
+                        console.log(error)
+                        alert('투표 종료에 실패하였습니다.')
+                    }
+                },
+                async deleteVote(id) {
+                    try {
+                        const body = {}
+                        option = {
+                            headers: {'X-CSRFToken': csrftoken},
+                        }
+                        const respose = await axios.delete(`${this.api}${id}/`, body, option)
+                        this.getActiveVoteList()
+                        alert('투표가 삭제되었습니다.')
+                    } catch(error) {
+                        console.log(error)
+                        alert('투표 종료에 실패하였습니다.')
+                    }
                 }
-                const respose = await axios.delete(`${this.api}${id}/`, body, option)
-                this.getActiveVoteList()
-                alert('투표가 삭제되었습니다.')
-            } catch(error) {
-                console.log(error)
-                alert('투표 종료에 실패하였습니다.')
             }
-        }
-    }
-  }).mount('#app')
-</script>
-
+        }).mount('#app')
+        </script>
+    </body>
 </html>
