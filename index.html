@@ -1,0 +1,121 @@
+<script src="https://unpkg.com/vue@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<div id="app">
+    <div>
+        <h2>투표 생성</h2>
+        <label for="subject">투표 주제</label>
+        <input type="text" id="subject" v-model="subject">
+        <label for="password">비밀번호(6자리 숫자)</label>
+        <input type="text" id="psssword" v-model="password" @keypress.enter="createVote" minlength="6" maxlength="6">
+        <button @click="createVote">투표 등록</button>
+    </div>
+    <div v-for="vote in votes" :key="vote.id">
+        <h1>[{{ vote.id }}] {{ vote.subject }}</h1>
+        <p>투표 등록일: {{ vote.created }}</p>
+        <p>찬성: {{ vote.yes }}</p>
+        <p>반대: {{ vote.no }}</p>
+        <div v-if="vote.is_active">
+            <button @click="submitYesVote(vote.id)">YES</button>
+            <button @click="submitNoVote(vote.id)">NO</button>
+            <button @click="checkFinishiVote(vote.id, vote.password)">투표 종료</button>
+        </div>
+        <div v-else>
+            <p>종료된 투표입니다.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+  const { createApp } = Vue
+
+  createApp({
+    data() {
+      return {
+        votes: [],
+        subject: '',
+        password: '',
+      }
+    },
+    mounted() {
+        this.getActiveVoteList()
+    },
+    methods: {
+        async createVote() {
+            try {
+                let body = {
+                    "subject": this.subject,
+                    "password": this.password
+                }
+                const response = await axios.post('http://127.0.0.1:8000/api/vote/', body)
+                this.getActiveVoteList()
+                this.subject = ''
+                this.password = ''
+                alert('투표가 등록되었습니다.')
+            } catch(error) {
+                console.log(error)
+                alert('투표 등록에 실패하였습니다.')
+            }
+        },
+        async getActiveVoteList() {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/vote/')
+                this.votes = response.data;
+            } catch(error) {
+                console.log(error);
+            }
+        },
+        async submitYesVote(id) {
+            try {
+                let body = {};
+                const nowVote = await axios.get(`http://127.0.0.1:8000/api/vote/${id}/`)
+                body = {
+                    "yes": nowVote.data.yes + 1
+                }
+                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                this.getActiveVoteList()
+                alert('투표가 완료되었습니다.')
+            } catch(error) {
+                console.log(error);
+                alert('투표에 실패하였습니다.')
+            }
+        },
+        async submitNoVote(id) {
+            try {
+                let body = {}
+                const nowVote = await axios.get(`http://127.0.0.1:8000/api/vote/${id}/`)
+                body = {
+                    "no": nowVote.data.no + 1
+                }
+                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                this.getActiveVoteList()
+                alert('투표가 완료되었습니다.')
+            } catch(error) {
+                console.log(error)
+                alert('투표에 실패하였습니다.')
+            }
+        },
+        checkFinishiVote(id, password) {
+            const input = prompt('비밀번호(6자리)를 입력해주세요.')
+            if (input === password) {
+                this.finishVote(id)
+            } else {
+                alert('비밀번호가 일치하지 않습니다.')
+            }
+        },
+        async finishVote(id) {
+            try {
+                const body = {
+                    "is_active": false
+                }
+                const respose = await axios.patch(`http://127.0.0.1:8000/api/vote/${id}/`, body)
+                this.getActiveVoteList()
+                alert('투표가 종료되었습니다.')
+            } catch(error) {
+                console.log(error)
+                alert('투표 종료에 실패하였습니다.')
+            }
+        }
+    }
+  }).mount('#app')
+</script>
