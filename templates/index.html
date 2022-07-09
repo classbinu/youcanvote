@@ -11,7 +11,7 @@
         <h2 class="text-center text-6xl mb-10">YES or NO</h2>
         <div class="mb-2">
             <label for="subject" class="mr-10">투표주제</label>
-            <input type="text" id="subject" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
+            <input type="text" id="subject" placeholder="ex) 사랑하는 사람이 있습니까?" maxlength="50" class="input input-bordered input-primary w-full max-w-xs" v-model="subject">
         </div>
         <div class="mb-5">
             <label for="password" class="mr-10">비밀번호</label>
@@ -39,17 +39,20 @@
                 </div>
                 <div class="card-actions justify-center">
                     <div v-if="vote.is_active">
-                        <button @click="checkFinishiVote(vote.id, vote.password)" class="btn btn-xs btn-accent">투표 종료</button>
+                        <button @click="confirmFinishiVote(vote.id, vote.password)" class="btn btn-xs btn-warning">투표 종료</button>
                     </div>
                     <div v-else>
-                        <p class="my-5 text-accent">종료된 투표입니다.</p>
+                        <span class="text-error">종료된 투표입니다.</span>
+                        <div class="flex justify-center mt-5">
+                            <button @click="confirmDeleteVote(vote.id, vote.password)" class="btn btn-xs btn-error">투표 삭제</button>
+                        </div>
                     </div>
                 </div>
             </div>
             <p class="text-xs mr-5 mb-5 text-right" v-text="vote.created"></p>
         </div>
     </div>
-    <div class="h-20"></div>
+    <p class="py-20 text-center">classbinu@gmail.com</p>
 </div>
 
 <script>
@@ -133,10 +136,18 @@
                 alert('투표에 실패하였습니다.')
             }
         },
-        checkFinishiVote(id, password) {
-            const input = prompt('비밀번호를 입력해주세요.')
+        confirmFinishiVote(id, password) {
+            const input = prompt('투표를 종료합니다. 비밀번호를 입력해주세요.')
             if (input === password) {
                 this.finishVote(id)
+            } else {
+                alert('비밀번호가 일치하지 않습니다.')
+            }
+        },
+        confirmDeleteVote(id, password) {
+            const input = prompt('투표를 삭제합니다. 비밀번호를 입력해주세요.')
+            if (input === password) {
+                this.deleteVote(id)
             } else {
                 alert('비밀번호가 일치하지 않습니다.')
             }
@@ -152,6 +163,20 @@
                 const respose = await axios.patch(`${this.api}${id}/`, body, option)
                 this.getActiveVoteList()
                 alert('투표가 종료되었습니다.')
+            } catch(error) {
+                console.log(error)
+                alert('투표 종료에 실패하였습니다.')
+            }
+        },
+        async deleteVote(id) {
+            try {
+                const body = {}
+                option = {
+                    headers: {'X-CSRFToken': csrftoken},
+                }
+                const respose = await axios.delete(`${this.api}${id}/`, body, option)
+                this.getActiveVoteList()
+                alert('투표가 삭제되었습니다.')
             } catch(error) {
                 console.log(error)
                 alert('투표 종료에 실패하였습니다.')
