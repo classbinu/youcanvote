@@ -2,6 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.1/dist/full.css" rel="stylesheet" type="text/css" />
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 <html data-theme="emerald">
 
 <div id="app" class="container-fluid mx-auto bg-base-200">
@@ -52,6 +53,7 @@
 </div>
 
 <script>
+  const csrftoken = Cookies.get('csrftoken');
   const { createApp } = Vue
 
   createApp({
@@ -99,7 +101,10 @@
                 body = {
                     "yes": nowVote.data.yes + 1
                 }
-                const respose = await axios.patch(`${this.api}${id}/`, body)
+                option = {
+                    headers: {'X-CSRFToken': csrftoken},
+                }
+                const respose = await axios.patch(`${this.api}${id}/`, body, option)
                 this.getActiveVoteList()
                 alert('투표가 완료되었습니다.')
             } catch(error) {
