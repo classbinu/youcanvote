@@ -209,16 +209,15 @@
                 },
                 async deleteVote(id) {
                     try {
-                        const body = {}
                         option = {
                             headers: {'X-CSRFToken': csrftoken},
                         }
-                        const respose = await axios.delete(`${this.api}${id}/`, body, option)
+                        const respose = await axios.delete(`${this.api}${id}/`, option)
                         this.getActiveVoteList()
                         alert('투표가 삭제되었습니다.')
                     } catch(error) {
                         console.log(error)
-                        alert('투표 종료에 실패하였습니다.')
+                        alert('투표 삭제에 실패하였습니다.')
                     }
                 }
             }
