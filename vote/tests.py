@@ -13,11 +13,6 @@ class VoteCrudTest(APITestCase):
         self.list_url = reverse('vote:api-list')
         self.detail_url = reverse('vote:api-detail', args=[1])
 
-    def test_read_vote_list(self):
-        """전체 투표 리스트 읽기를 테스트합니다."""
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_create_vote(self):
         """개별 투표 생성을 테스트합니다."""
         data = {
@@ -52,6 +47,20 @@ class VoteCrudTest(APITestCase):
         self.assertEqual(response.data['no'], obj.no)
         self.assertEqual(response.data['password'], obj.password)
         self.assertEqual(response.data['is_active'], obj.is_active)
+
+    def test_read_vote_list(self):
+        """전체 투표 리스트 읽기를 테스트합니다."""
+        data = {
+            'subject': '테스트 투표를 생성합니다',
+            'password': '123456',
+        }
+        self.client.post(self.list_url, data=data, format='json')
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # DB를 확인합니다.
+        obj = Vote.objects.all()
+        self.assertEqual(len(response.data), obj.count())
 
     def test_update_vote(self):
         """개별 투표 수정을 테스트합니다."""
