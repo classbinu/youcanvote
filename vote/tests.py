@@ -9,7 +9,6 @@ from .models import Vote
 
 class VoteCrudTest(APITestCase):
     """Vote의 CRUD를 테스트합니다."""
-
     def setUp(self):
         self.list_url = reverse('vote:api-list')
         self.detail_url = reverse('vote:api-detail', args=[1])
@@ -31,7 +30,10 @@ class VoteCrudTest(APITestCase):
         # DB를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(data['subject'], obj.subject)
+        self.assertEqual(0, obj.yes)
+        self.assertEqual(0, obj.no)
         self.assertEqual(data['password'], obj.password)
+        self.assertEqual(True, obj.is_active)
 
     def test_read_vote(self):
         """개별 투표 읽기를 테스트합니다."""
@@ -42,6 +44,11 @@ class VoteCrudTest(APITestCase):
         self.client.post(self.list_url, data=data, format='json')
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # DB를 확인합니다.
+        obj = Vote.objects.get()
+        self.assertEqual(data['subject'], obj.subject)
+        self.assertEqual(data['password'], obj.password)
 
     def test_update_vote(self):
         """개별 투표 수정을 테스트합니다."""
@@ -67,7 +74,6 @@ class VoteCrudTest(APITestCase):
         self.assertEqual(data2['no'], obj.no)
         self.assertEqual(data2['password'], obj.password)
         self.assertEqual(data2['is_active'], obj.is_active)
-
 
     def test_delete_vote(self):
         """개별 투표 삭제를 테스트합니다."""
