@@ -57,7 +57,7 @@ class VoteCrudTest(APITestCase):
         self.client.post(self.list_url, data=data, format='json')
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # DB를 확인합니다.
         obj = Vote.objects.all()
         self.assertEqual(len(response.data), obj.count())
