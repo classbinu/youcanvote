@@ -47,8 +47,11 @@ class VoteCrudTest(APITestCase):
 
         # DB를 확인합니다.
         obj = Vote.objects.get()
-        self.assertEqual(data['subject'], obj.subject)
-        self.assertEqual(data['password'], obj.password)
+        self.assertEqual(response.data['subject'], obj.subject)
+        self.assertEqual(response.data['yes'], obj.yes)
+        self.assertEqual(response.data['no'], obj.no)
+        self.assertEqual(response.data['password'], obj.password)
+        self.assertEqual(response.data['is_active'], obj.is_active)
 
     def test_update_vote(self):
         """개별 투표 수정을 테스트합니다."""
