@@ -22,7 +22,14 @@ class VoteCrudTest(APITestCase):
         response = self.client.post(self.list_url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # DB를 확인합니다.
+        # Request Data와 Response Data를 확인합니다.
+        self.assertEqual(data['subject'], response.data['subject'])
+        self.assertEqual(0, response.data['yes'])
+        self.assertEqual(0, response.data['no'])
+        self.assertEqual(data['password'], response.data['password'])
+        self.assertEqual(True, response.data['is_active'])
+
+        # Request Data와 DB를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(data['subject'], obj.subject)
         self.assertEqual(0, obj.yes)
@@ -40,7 +47,7 @@ class VoteCrudTest(APITestCase):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # DB를 확인합니다.
+        # Response Data와 DB를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(response.data['subject'], obj.subject)
         self.assertEqual(response.data['yes'], obj.yes)
@@ -58,7 +65,7 @@ class VoteCrudTest(APITestCase):
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # DB를 확인합니다.
+        # Response Data와 DB를 확인합니다.
         obj = Vote.objects.all()
         self.assertEqual(len(response.data), obj.count())
 
@@ -79,7 +86,14 @@ class VoteCrudTest(APITestCase):
         response = self.client.patch(self.detail_url, data=data2, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # DB를 확인합니다.
+        # Request Data와 Response Data를 확인합니다.
+        self.assertEqual(data2['subject'], response.data['subject'])
+        self.assertEqual(data2['yes'], response.data['yes'])
+        self.assertEqual(data2['no'], response.data['no'])
+        self.assertEqual(data2['password'], response.data['password'])
+        self.assertEqual(data2['is_active'], response.data['is_active'])
+
+        # Request Data와 DB를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(data2['subject'], obj.subject)
         self.assertEqual(data2['yes'], obj.yes)
