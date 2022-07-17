@@ -10,6 +10,7 @@ from .models import Vote
 class VoteCrudTest(APITestCase):
     """Vote의 CRUD를 테스트합니다."""
     def setUp(self):
+        """API URL을 셋업합니다."""
         self.list_url = reverse('vote:api-list')
         self.detail_url = reverse('vote:api-detail', args=[1])
 
@@ -25,11 +26,11 @@ class VoteCrudTest(APITestCase):
         # Request Data와 Response Data를 확인합니다.
         self.assertEqual(data['subject'], response.data['subject'])
         self.assertEqual(0, response.data['yes'])
-        self.assertEqual(0, response.data['no'])
+        self.assertEqual(0, response.data['0'])
         self.assertEqual(data['password'], response.data['password'])
         self.assertEqual(True, response.data['is_active'])
 
-        # Request Data와 DB를 확인합니다.
+        # Request Data와 DB Data를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(data['subject'], obj.subject)
         self.assertEqual(0, obj.yes)
@@ -47,7 +48,7 @@ class VoteCrudTest(APITestCase):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Response Data와 DB를 확인합니다.
+        # Response Data와 DB Data를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(response.data['subject'], obj.subject)
         self.assertEqual(response.data['yes'], obj.yes)
@@ -65,7 +66,7 @@ class VoteCrudTest(APITestCase):
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Response Data와 DB를 확인합니다.
+        # Response Data 개수와 DB Data 개수를 확인합니다.
         obj = Vote.objects.all()
         self.assertEqual(len(response.data), obj.count())
 
@@ -93,7 +94,7 @@ class VoteCrudTest(APITestCase):
         self.assertEqual(data2['password'], response.data['password'])
         self.assertEqual(data2['is_active'], response.data['is_active'])
 
-        # Request Data와 DB를 확인합니다.
+        # Request Data와 DB Data를 확인합니다.
         obj = Vote.objects.get()
         self.assertEqual(data2['subject'], obj.subject)
         self.assertEqual(data2['yes'], obj.yes)
@@ -111,7 +112,7 @@ class VoteCrudTest(APITestCase):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        # DB를 확인합니다.
+        # DB Data 개수를 확인합니다. 삭제 테스트가 성공하면 DB Data 개수는 0이어야 합니다.
         obj = Vote.objects.all()
         self.assertEqual(0, obj.count())
         
