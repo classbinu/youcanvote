@@ -26,7 +26,7 @@ class VoteCrudTest(APITestCase):
         # Request Data와 Response Data를 확인합니다.
         self.assertEqual(data['subject'], response.data['subject'])
         self.assertEqual(0, response.data['yes'])
-        self.assertEqual(0, response.data['0'])
+        self.assertEqual(0, response.data['no'])
         self.assertEqual(data['password'], response.data['password'])
         self.assertEqual(True, response.data['is_active'])
 
