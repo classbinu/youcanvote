@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
     '127.0.0.1',
     '13.124.192.226',
-    'easyvote-env-dev.us-west-2.elasticbeanstalk.com',
+    'easyvote2-dev.ap-northeast-2.elasticbeanstalk.com',
     ]
 
 
