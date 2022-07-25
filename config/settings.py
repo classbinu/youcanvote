@@ -33,13 +33,14 @@ SECRET_KEY = os.environ['secret_key']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '.herokuapp.com',
-    '127.0.0.1',
-    '13.124.192.226',
-    'easyvote2-dev2.ap-northeast-2.elasticbeanstalk.com',
-    ]
+# ALLOWED_HOSTS = [
+#     '.herokuapp.com',
+#     '127.0.0.1',
+#     '13.124.192.226',
+#     'easyvote2-dev2.ap-northeast-2.elasticbeanstalk.com',
+#     ]
 
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
