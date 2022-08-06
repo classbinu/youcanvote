@@ -4,9 +4,9 @@ services:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "80:80"
+      - "80:80/tcp"
     volumes:
-      - ./nginx/nginx:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx/conf.d
       # - ./static:/staticfiles
     depends_on:
       - web
