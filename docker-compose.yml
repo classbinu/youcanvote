@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - secret_key='django-insecure-@%*ewvv4vw8o9x)s_8n75^yaiym*myk)*foi4kx7opczjq5n8&'
+      - secret_key=django-insecure-@%*ewvv4vw8o9x)s_8n75^yaiym*myk)*foi4kx7opczjq5n8&
     container_name: web
     command: gunicorn config.wsgi:application --bind 0:8000
     # volumes:
