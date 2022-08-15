@@ -22,3 +22,4 @@ services:
     #   - ./static:/usr/src/app/staticfiles
     expose:
       - "8000"
+      
