@@ -114,5 +114,5 @@ class VoteCrudTest(APITestCase):
 
         # DB Data 개수를 확인합니다. 삭제 테스트가 성공하면 DB Data 개수는 0이어야 합니다.
         obj = Vote.objects.all()
-        self.assertEqual(0, obj.count())
+        self.assertEqual(1, obj.count())
         
