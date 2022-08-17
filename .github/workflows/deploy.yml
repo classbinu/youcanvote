@@ -35,4 +35,4 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "youcanvote"
         heroku_email: "classbinu@gmail.com"
-        branch: "HEAD:master"
+        branch: "master"
